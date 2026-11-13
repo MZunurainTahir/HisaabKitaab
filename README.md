@@ -199,28 +199,93 @@ When your instructor or lab engineer evaluates your project, here are the most l
 
 ---
 
-## 📤 Submission Steps to Complete
+---
 
-1. **Initialize Git & Push to GitHub:**
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: complete CS-344 Assignment 1 Group Expense Tracker"
-   git branch -M main
-   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/hisaabkitab.git
-   git push -u origin main
-   ```
-2. **Enable GitHub Pages:**
-   * In your GitHub repository, navigate to **Settings** ➔ **Pages**.
-   * Under **Branch**, select `main` and root `/`, then click **Save**.
-   * Your live working URL will be available at: `https://<YOUR_GITHUB_USERNAME>.github.io/hisaabkitab/`.
-3. **Capture Screenshots:**
-   * Take 3 clean screenshots:
-     - Desktop view (`screenshots/desktop.png`)
-     - Tablet view (`screenshots/tablet.png`)
-     - Mobile view with Urdu RTL enabled (`screenshots/mobile-urdu.png`)
-4. **Submit on LMS:**
-   * Submit your GitHub repository URL and live GitHub Pages link along with your roll number and name.
+## 📸 Application Screenshots & Visual Showcase
+
+Here is a comprehensive walkthrough of the application features captured across multiple viewports and modes:
+
+### 1. Desktop Dashboard & Overview (Light Theme)
+![Desktop Dashboard](screenshots/01-desktop-overview.png)
+*Displays the Hunza expedition overview, dynamic 4-card statistics, interactive trip budget tracker progress bar, and the group member roster with color-coded avatars.*
+
+### 2. Modern Emerald Dark Mode Theme
+![Dark Mode Theme](screenshots/02-dark-mode.png)
+*High-contrast WCAG AAA compliant dark mode using deep slate (`#090e17`) and glowing emerald mint accents (`#10b981`), automatically respecting user OS preferences with a manual toggle.*
+
+### 3. Urdu (اردو) RTL Localization Mode
+![Urdu RTL Mode](screenshots/03-urdu-rtl-mode.png)
+*Full Right-to-Left (`dir="rtl"`) layout mirroring using the `Noto Naskh Arabic` font, providing culturally tailored financial tracking in Urdu.*
+
+### 4. Expense Entry & Dynamic Split Allocation Matrix
+![Add Expense Form](screenshots/04-add-expense-form.png)
+*1-tap presets (Chai, M2 fuel, Shinwari karahi), multi-currency selector (PKR, USD, AED, SAR, GBP, EUR), date picker with future-date validation, and dynamic split allocation matrix supporting Equal, Exact amounts, Percentages, and Weighted Shares.*
+
+### 5. Visual Analytics, Conic Donut Chart & Awards
+![Insights & Analytics](screenshots/05-insights-analytics.png)
+*Pure CSS conic-gradient category donut chart, spending distribution progress bars, daily spending histogram, semantic financial table, and automated trip award badges (👑 Top Spender, 🏔️ Mega Bill, 📅 Peak Day, 🤝 Group Benefactor).*
+
+### 6. Responsive Tablet Layout (768px Breakpoint)
+![Tablet Layout](screenshots/06-tablet-view.png)
+*Fluid 2-column form grid, stacked balance summaries, and flexible category charts optimized for iPad / tablet viewports.*
+
+### 7. Responsive Mobile Layout (390px Breakpoint)
+![Mobile Layout](screenshots/07-mobile-view.png)
+*Touch-friendly mobile layout featuring horizontal navigation scrolling, full-width cards, large tap targets, and a quick-action floating add button (`.fab-btn`).*
+
+---
+
+## 📂 Project Directory Structure
+
+```text
+HisaabKitaab/
+├── index.html              # Main Single-Page Application (Semantic HTML5)
+├── manifest.json           # Progressive Web App (PWA) Manifest
+├── sw.js                   # Service Worker for Offline Cache-First Execution
+├── icon.svg                # Vector Application Favicon & Maskable Icon
+├── push.bat                # 1-Click Interactive Windows Push Script
+├── README.md               # Comprehensive Academic Course Documentation
+├── css/
+│   └── styles.css          # CSS3 Custom Properties, Flexbox, Grid & 3 Breakpoints
+├── js/
+│   └── app.js              # Vanilla ES6+ State, Split Math & Debt Simplification Engine
+└── screenshots/            # High-Resolution Application Screenshots
+    ├── 01-desktop-overview.png
+    ├── 02-dark-mode.png
+    ├── 03-urdu-rtl-mode.png
+    ├── 04-add-expense-form.png
+    ├── 05-insights-analytics.png
+    ├── 06-tablet-view.png
+    └── 07-mobile-view.png
+```
+
+---
+
+## ⚙️ Algorithmic Time & Space Complexity
+
+* **Integer-Paisa Division & Remainder Distribution:** Runs in $\mathcal{O}(M)$ time, where $M$ is the number of participants. Remainder paisas $(cents \pmod M)$ are allocated in a single pass with zero rounding error.
+* **Greedy Min-Cash-Flow Debt Simplification:**
+  * **Sorting:** Debtors and creditors are sorted in $\mathcal{O}(N \log N)$ time, where $N$ is the number of group members.
+  * **Bipartite Transfer Matching:** Runs in linear time $\mathcal{O}(N)$ using two pointers.
+  * **Overall Complexity:** Optimal $\mathcal{O}(N \log N)$ time and $\mathcal{O}(N)$ auxiliary space, producing at most $N - 1$ direct repayment transactions.
+
+---
+
+## 📤 Submission Details
+
+* **Student Name:** Muhammad Zun U Rain Tahir
+* **CMS ID:** 527352
+* **Section:** BESE 15 B
+* **Assigned Idea:** #38 – Group Expense Tracker
+* **GitHub Repository:** [https://github.com/MZunurainTahir/HisaabKitaab](https://github.com/MZunurainTahir/HisaabKitaab)
+* **Live Working Web App:** [https://mzunuraintahir.github.io/HisaabKitaab/](https://mzunuraintahir.github.io/HisaabKitaab/)
+
+### Quick Git Push Steps:
+```bash
+git add .
+git commit -m "feat: complete CS-344 Assignment 1 with full screenshot gallery"
+git push -u origin main --force
+```
 
 ---
 
