@@ -1,0 +1,17 @@
+{
+  "name": "HisaabKitab – Group Expense Tracker",
+  "short_name": "HisaabKitab",
+  "description": "CS-344 Web Engineering Assignment 1 (Topic #38) by Muhammad Zun U Rain Tahir",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a5c36",
+  "theme_color": "#0a5c36",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

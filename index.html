@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0a5c36">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HisaabKitab – Group Expense Tracker | CS-344 Assignment 1 (Idea #38)</title>
+<meta name="description" content="A premium client-side group expense splitter, debt simplifier, and settlement calculator. CS-344 Web Engineering Assignment 1, Topic 38 by Muhammad Zun U Rain Tahir (CMS: 527352).">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<!-- Main Top Header -->
+<header class="top" role="banner">
+  <div class="brand-group">
+    <div class="logo-box">
+      <span class="flag-icon" aria-hidden="true">🇵🇰</span>
+      <div>
+        <h1 class="brand-title">HisaabKitab <span class="brand-badge">TripTab 2.0</span></h1>
+        <p class="brand-sub" id="brandSub">Smart Group Expense Tracker &amp; Debt Simplifier</p>
+      </div>
+    </div>
+    <div class="student-badge" aria-label="Student Information">
+      <span class="badge-dot"></span>
+      <div class="badge-text">
+        <strong>Muhammad Zun U Rain Tahir</strong> · CMS: 527352 · BESE 15 B
+        <span class="badge-meta">CS-344 Web Engineering · Topic #38</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-links" aria-label="Primary Navigation">
+    <a href="#overview">Overview</a>
+    <a href="#balances">Balances</a>
+    <a href="#add">Add Expense</a>
+    <a href="#ledger">Ledger</a>
+    <a href="#insights">Insights</a>
+    <a href="#activity">Activity</a>
+    <a href="#wdlc" class="nav-highlight">WDLC &amp; Architecture</a>
+  </nav>
+
+  <div class="header-tools">
+    <button type="button" id="langBtn" class="tool-btn" title="Toggle Urdu / English Language" aria-label="Switch Language to Urdu">
+      <span class="tool-icon">🌐</span> <span id="langLabel">اردو</span>
+    </button>
+    <button type="button" id="themeBtn" class="tool-btn" title="Toggle Light / Dark Mode" aria-label="Toggle Dark Mode">
+      <span id="themeIcon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO SECTION: Trip Summary & Roster -->
+  <section id="overview" class="hero" aria-labelledby="trip-title">
+    <div class="hero-header">
+      <div>
+        <p class="greet" id="greet">السلام علیکم 👋 Welcome</p>
+        <h2 id="trip-title" class="trip-heading">Hunza &amp; Skardu Expedition, Autumn 2026</h2>
+        <p class="trip-desc">Shared trip expenses among university friends. All transactions run client-side with zero backend dependencies.</p>
+      </div>
+      <div class="trip-badge-pill">
+        <span class="pill-label">STATUS</span>
+        <span class="pill-val">Active Adventure 🏔️</span>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards Grid -->
+    <dl class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <dt>Total Spent</dt>
+        <dd id="statTotal">Rs 0.00</dd>
+      </div>
+      <div class="stat-card">
+        <dt>Total Entries</dt>
+        <dd id="statCount">0</dd>
+      </div>
+      <div class="stat-card">
+        <dt>Per Person Share</dt>
+        <dd id="statAverage">Rs 0.00</dd>
+      </div>
+      <div class="stat-card">
+        <dt>Largest Expense</dt>
+        <dd id="statBiggest" title="No expense yet">–</dd>
+      </div>
+    </dl>
+
+    <!-- Budget Tracker Bar -->
+    <div class="budget-card">
+      <div class="budget-info">
+        <label for="budgetInput" class="budget-label">
+          <span>🎯 Trip Budget Target</span>
+          <span class="budget-edit-hint">(Click to adjust)</span>
+        </label>
+        <div class="budget-input-wrap">
+          <span class="currency-prefix">Rs</span>
+          <input id="budgetInput" type="number" min="0" max="10000000" step="500" placeholder="e.g. 75000" aria-label="Trip budget amount in Rupees">
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <progress id="budgetProgress" value="0" max="100" aria-labelledby="budgetStatusTxt"></progress>
+        <div class="budget-meta">
+          <span id="budgetStatusTxt">Budget status calculating...</span>
+          <span id="budgetPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group Members Management -->
+    <div class="roster-card">
+      <div class="roster-header">
+        <div>
+          <h3 class="roster-title">👥 Group Members (<span id="memberCount">4</span>)</h3>
+          <p class="roster-sub">Members involved in splitting bills. Members with active debts or expenses cannot be removed.</p>
+        </div>
+        <form id="memberAddForm" class="member-add-form" novalidate>
+          <label for="newMemberName" class="sr-only">Add new group member</label>
+          <input id="newMemberName" type="text" maxlength="20" minlength="2" required autocomplete="off" placeholder="Add name (e.g., Zun, Sara)">
+          <button type="submit" class="btn btn-sm btn-accent">+ Add Member</button>
+        </form>
+      </div>
+      <p class="form-alert" id="memberFormMsg" role="alert" aria-live="polite"></p>
+      <ul id="memberChipsList" class="member-chips-list" aria-label="List of current group members"></ul>
+    </div>
+  </section>
+
+  <!-- BALANCES & SETTLEMENT SECTION -->
+  <section id="balances" class="card-section" aria-labelledby="bal-heading">
+    <div class="section-title-wrap">
+      <div>
+        <h2 id="bal-heading" class="section-title">⚖️ Who Owes Whom &amp; Settlement</h2>
+        <p class="section-desc">Real-time ledger balances calculated from all expenses and payments. Positive balances mean money is owed to you; negative means you owe the group.</p>
+      </div>
+      <div class="live-indicator">
+        <span class="pulse-dot"></span> Real-time Balanced
+      </div>
+    </div>
+
+    <div class="balances-layout">
+      <!-- Member Net Positions -->
+      <div class="balance-column">
+        <h3 class="sub-heading">Individual Net Positions</h3>
+        <ul id="balanceList" class="balance-list" aria-label="Net balances for each group member"></ul>
+      </div>
+
+      <!-- Debt Simplification & Settle Up -->
+      <div class="settle-column">
+        <div class="settle-header-wrap">
+          <div>
+            <h3 class="sub-heading">⚡ Smart Debt Simplification</h3>
+            <p class="settle-sub">Greedy min-cash-flow algorithm reducing total group transfers to minimum payments.</p>
+          </div>
+          <button type="button" class="btn btn-xs btn-outline" id="explainAlgorithmBtn" title="How does this work?">How it works</button>
+        </div>
+
+        <ul id="settleList" class="settle-list" aria-label="Suggested settlement transactions"></ul>
+
+        <div class="next-payer-box" id="nextPayerBox">
+          <span class="box-icon">💡</span>
+          <span id="nextPayerText">Calculating next recommendation...</span>
+        </div>
+
+        <div class="settle-actions">
+          <button type="button" id="shareWhatsAppBtn" class="btn btn-whatsapp">
+            <span class="btn-icon">💬</span> Share on WhatsApp
+          </button>
+          <button type="button" id="copySummaryBtn" class="btn btn-secondary">
+            <span class="btn-icon">📋</span> Copy Summary
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADD / CORRECT EXPENSE SECTION -->
+  <section id="add" class="card-section" aria-labelledby="add-heading">
+    <div class="section-title-wrap">
+      <div>
+        <h2 id="add-heading" class="section-title">💸 Add or Correct an Expense</h2>
+        <p class="section-desc">Record a group expense with flexible splitting options (Equal, Exact, Percentage, or Weighted Shares).</p>
+      </div>
+      <div class="shortcut-pill" title="Press N anywhere to jump here">
+        Keyboard shortcut: <kbd>N</kbd>
+      </div>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="presets-container">
+      <span class="presets-label">⚡ 1-Tap Presets:</span>
+      <div class="presets-scroll" id="presetsList" role="region" aria-label="Expense presets"></div>
+    </div>
+
+    <!-- Main Expense Form -->
+    <form id="expenseForm" class="expense-form" novalidate>
+      <div class="form-grid">
+
+        <!-- What was it for? -->
+        <div class="form-group col-span-2">
+          <label for="expenseDesc">Description <span class="req">*</span></label>
+          <input id="expenseDesc" type="text" required minlength="3" maxlength="60" placeholder="e.g. Peshawari Karahi &amp; Naan at Attabad Lake">
+          <span class="field-hint">Minimum 3 characters, describes what the money was spent on.</span>
+        </div>
+
+        <!-- Amount & Currency -->
+        <div class="form-group">
+          <label for="expenseAmount">Amount &amp; Currency <span class="req">*</span></label>
+          <div class="amount-input-group">
+            <input id="expenseAmount" type="number" inputmode="decimal" required min="0.01" max="10000000" step="0.01" placeholder="0.00">
+            <select id="expenseCurrency" aria-label="Expense currency">
+              <option value="PKR" selected>PKR (Rs)</option>
+              <option value="USD">USD ($)</option>
+              <option value="AED">AED (د.إ)</option>
+              <option value="SAR">SAR (﷼)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="EUR">EUR (€)</option>
+            </select>
+          </div>
+          <span class="field-hint" id="currencyHint">Amount in Pakistani Rupees.</span>
+        </div>
+
+        <!-- Paid By -->
+        <div class="form-group">
+          <label for="expensePayer">Paid By <span class="req">*</span></label>
+          <select id="expensePayer" required aria-label="Member who paid"></select>
+          <span class="field-hint">The member who provided the money upfront.</span>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+          <label for="expenseDate">Expense Date <span class="req">*</span></label>
+          <input id="expenseDate" type="date" required>
+          <span class="field-hint">Date when expense occurred (cannot be in future).</span>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label for="expenseCategory">Category <span class="req">*</span></label>
+          <select id="expenseCategory" required></select>
+          <span class="field-hint">Used for budget analytics and reporting.</span>
+        </div>
+
+        <!-- Split Mode -->
+        <div class="form-group col-span-2">
+          <label for="splitMode">Split Methodology <span class="req">*</span></label>
+          <select id="splitMode">
+            <option value="equal" selected>🤝 Split Equally (Distributed paisa-safe rounding)</option>
+            <option value="exact">🎯 Split by Exact Amounts (Rs per person)</option>
+            <option value="percent">📊 Split by Percentages (Must total 100%)</option>
+            <option value="shares">⚖️ Split by Shares / Weights (e.g. 2 : 1 : 1)</option>
+          </select>
+          <span class="field-hint">Select how this bill is divided among members.</span>
+        </div>
+
+        <!-- Optional Note / Receipt Reference -->
+        <div class="form-group col-span-2">
+          <label for="expenseNote">Notes &amp; Payment Details <span class="opt">(Optional)</span></label>
+          <input id="expenseNote" type="text" maxlength="120" placeholder="e.g. Paid via JazzCash to vendor; receipt photographed by Ali">
+          <span class="field-hint">Optional references, receipt links, payment mode.</span>
+        </div>
+
+      </div>
+
+      <!-- Dynamic Split Allocation Container -->
+      <fieldset class="split-fieldset">
+        <legend class="split-legend">
+          <span>Split Allocation Matrix</span>
+          <span id="splitLiveStatus" class="split-status-badge">All selected</span>
+        </legend>
+        <div id="splitFieldsContainer" class="split-fields-grid"></div>
+      </fieldset>
+
+      <p class="form-alert" id="formAlertMsg" role="alert" aria-live="polite"></p>
+
+      <div class="form-actions">
+        <button type="submit" id="saveExpenseBtn" class="btn btn-primary">
+          <span class="btn-icon">＋</span> Add Expense
+        </button>
+        <button type="button" id="cancelEditBtn" class="btn btn-secondary" hidden>
+          Cancel Edit
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- LEDGER & TRANSACTIONS SECTION -->
+  <section id="ledger" class="card-section" aria-labelledby="led-heading">
+    <div class="section-title-wrap">
+      <div>
+        <h2 id="led-heading" class="section-title">📖 Comprehensive Expense Ledger</h2>
+        <p class="section-desc">Search, filter, edit, or repeat expenses. Export reports to CSV or JSON format.</p>
+      </div>
+      <div class="export-actions">
+        <button type="button" class="btn btn-sm btn-outline" id="exportCsvBtn" title="Export tabular data to CSV">
+          📥 CSV
+        </button>
+        <button type="button" class="btn btn-sm btn-outline" id="exportJsonBtn" title="Export full backup to JSON">
+          💾 JSON
+        </button>
+        <button type="button" class="btn btn-sm btn-outline" id="printReportBtn" title="Print formal trip statement">
+          🖨️ Print
+        </button>
+        <label class="btn btn-sm btn-outline import-label" title="Import JSON backup file">
+          📂 Import
+          <input type="file" id="importJsonInput" accept=".json,application/json" hidden>
+        </label>
+        <button type="button" class="btn btn-sm btn-danger-outline" id="resetDemoBtn" title="Reset to sample dataset">
+          🔄 Reset Demo
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="filters-toolbar" role="search" aria-label="Ledger filter toolbar">
+      <div class="search-box">
+        <label for="filterSearch">Search Query</label>
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input id="filterSearch" type="search" placeholder="Search title, note, payer... (Press /)">
+        </div>
+      </div>
+
+      <div class="filter-box">
+        <label for="filterCategory">Filter Category</label>
+        <select id="filterCategory">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+
+      <div class="filter-box">
+        <label for="filterPayer">Paid By</label>
+        <select id="filterPayer">
+          <option value="">All Members</option>
+        </select>
+      </div>
+
+      <div class="filter-box">
+        <label for="filterSort">Sort Order</label>
+        <select id="filterSort">
+          <option value="new">Date: Newest First</option>
+          <option value="old">Date: Oldest First</option>
+          <option value="high">Amount: Highest First</option>
+          <option value="low">Amount: Lowest First</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ledger-meta-bar">
+      <span id="ledgerCountText" class="count-badge" aria-live="polite">Showing 0 entries</span>
+      <span class="shortcut-tip">Tip: Press <kbd>/</kbd> to quickly search transactions</span>
+    </div>
+
+    <!-- Transactions List -->
+    <ul id="expenseList" class="ledger-list" aria-label="Trip expenses list"></ul>
+  </section>
+
+  <!-- INSIGHTS & ANALYTICS SECTION -->
+  <section id="insights" class="card-section" aria-labelledby="ins-heading">
+    <div class="section-title-wrap">
+      <div>
+        <h2 id="ins-heading" class="section-title">📊 Trip Analytics &amp; Visual Insights</h2>
+        <p class="section-desc">Category distribution, daily spending timeline, member breakdown, and fun trip awards.</p>
+      </div>
+    </div>
+
+    <!-- Trip Awards -->
+    <h3 class="sub-heading">🏆 Trip Badges &amp; Highlights</h3>
+    <ul id="awardsList" class="awards-grid" aria-label="Trip highlight awards"></ul>
+
+    <!-- Visual Charts: Donut & Bars -->
+    <div class="charts-layout">
+      <!-- Donut Chart -->
+      <div class="donut-card">
+        <h3 class="chart-title">Spending by Category</h3>
+        <div class="donut-wrapper">
+          <div id="donutChart" class="donut-circle" role="img" aria-label="Donut chart representing category breakdown">
+            <div class="donut-inner">
+              <span class="donut-label">Total</span>
+              <strong id="donutTotalAmount">Rs 0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Progress Bars -->
+      <div class="bars-card">
+        <h3 class="chart-title">Category Breakdown</h3>
+        <ul id="categoryBarsList" class="cat-bars-list" aria-label="List of categories and spending totals"></ul>
+      </div>
+    </div>
+
+    <!-- Daily Spending Timeline -->
+    <div class="timeline-card">
+      <h3 class="chart-title">📅 Daily Spending Timeline</h3>
+      <div id="dailyChart" class="daily-chart" role="img" aria-label="Histogram of daily spending throughout the trip"></div>
+    </div>
+
+    <!-- Member Contribution Table -->
+    <div class="table-card">
+      <h3 class="chart-title">👥 Member Financial Breakdown</h3>
+      <div class="table-responsive">
+        <table id="memberSummaryTable" class="data-table">
+          <caption>Detailed audit of what each member paid versus their fair consumption share</caption>
+          <thead>
+            <tr>
+              <th scope="col">Member</th>
+              <th scope="col">Total Paid</th>
+              <th scope="col">Fair Share</th>
+              <th scope="col">Net Balance</th>
+              <th scope="col">Financial Status</th>
+            </tr>
+          </thead>
+          <tbody id="memberTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIT LOG & CORRECTIONS SECTION -->
+  <section id="activity" class="card-section" aria-labelledby="act-heading">
+    <div class="section-title-wrap">
+      <div>
+        <h2 id="act-heading" class="section-title">📝 Activity Log &amp; Corrections Trail</h2>
+        <p class="section-desc">Traceable history of all additions, member updates, settlements, and corrections (showing before &amp; after deltas).</p>
+      </div>
+      <button type="button" class="btn btn-xs btn-outline" id="clearLogBtn">Clear History</button>
+    </div>
+    <ol id="activityLogList" class="timeline-log" reversed aria-label="Activity audit trail"></ol>
+  </section>
+
+  <!-- WDLC & COURSE CONCEPTS SECTION -->
+  <section id="wdlc" class="card-section wdlc-section" aria-labelledby="wdlc-heading">
+    <div class="section-title-wrap">
+      <div>
+        <h2 id="wdlc-heading" class="section-title">🎓 CS-344 Course Concepts &amp; Architecture Note</h2>
+        <p class="section-desc">Formal submission documentation mapping syllabus concepts to implementation for Muhammad Zun U Rain Tahir (CMS: 527352 · Topic #38).</p>
+      </div>
+      <span class="academic-badge">30 MARKS RUBRIC ALIGNED</span>
+    </div>
+
+    <div class="wdlc-grid">
+      <!-- Problem & User Definition -->
+      <div class="wdlc-card">
+        <h3>1. Problem Statement &amp; User Personas</h3>
+        <p><strong>Target Users:</strong> University students and travel groups (e.g., NUST students on a northern areas trip to Hunza/Skardu) who frequently share food, fuel, tickets, and lodging costs.</p>
+        <p><strong>Core Problem:</strong> Calculating who owes whom becomes tangled when multiple members pay for different people with uneven splits, leading to awkward debt friction and calculation errors.</p>
+        <p><strong>Solution:</strong> A zero-latency client-side tracker that calculates net balances, prevents rounding leaks with integer-paisa math, and minimizes transfers using a greedy cash-flow optimizer.</p>
+      </div>
+
+      <!-- WDLC Stages -->
+      <div class="wdlc-card">
+        <h3>2. Web Development Life Cycle (WDLC)</h3>
+        <ol class="wdlc-steps">
+          <li><strong>Planning:</strong> Defined scope for Assignment 1 (client-side only, fictional data, no external payment APIs).</li>
+          <li><strong>Analysis:</strong> Identified core data entities (Members, Expenses, Splits, Settlements, Activity Logs).</li>
+          <li><strong>Design:</strong> Built mobile-first wireframes with 3 responsive breakpoints (320px, 768px, 1100px), semantic HTML tags, and accessible color schemes.</li>
+          <li><strong>Development:</strong> Implemented modular vanilla JS ES6+ without external frameworks or templates.</li>
+          <li><strong>Testing:</strong> Verified zero-sum balance invariant, empty states, XSS sanitization, CSV formula injection defense, and screen-reader accessibility.</li>
+          <li><strong>Deployment:</strong> Configured PWA with Web Manifest and Service Worker for offline execution.</li>
+        </ol>
+      </div>
+
+      <!-- Client vs Server Architecture -->
+      <div class="wdlc-card col-span-2">
+        <h3>3. Client vs. Server Architecture (Assignment 1 vs. Assignments 2 &amp; 3)</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Architectural Concern</th>
+                <th scope="col">Assignment 1 (Current Client-Side)</th>
+                <th scope="col">Assignments 2 &amp; 3 (Future Full-Stack)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Persistence</strong></td>
+                <td>Browser <code>localStorage</code> with JSON serialization</td>
+                <td>MongoDB persistent database with Mongoose schemas</td>
+              </tr>
+              <tr>
+                <td><strong>Authentication &amp; Security</strong></td>
+                <td>Client-side simulated profiles; strict CSP &amp; sanitization</td>
+                <td>JWT / Session tokens, bcrypt password hashing, RBAC</td>
+              </tr>
+              <tr>
+                <td><strong>Validation</strong></td>
+                <td>HTML5 Constraint API + Custom JS business validation</td>
+                <td>Server-side Joi / Express-validator before DB insert</td>
+              </tr>
+              <tr>
+                <td><strong>Data Consistency</strong></td>
+                <td>Paisa-level remainder allocation in browser memory</td>
+                <td>MongoDB multi-document ACID transactions</td>
+              </tr>
+              <tr>
+                <td><strong>API Communication</strong></td>
+                <td>Direct in-memory synchronous &amp; async event loop</td>
+                <td>RESTful HTTP endpoints (GET, POST, PUT, DELETE) via Fetch</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Algorithm Explanation -->
+      <div class="wdlc-card col-span-2">
+        <h3>4. Mathematical Algorithms: Split Distribution &amp; Debt Simplification</h3>
+        <p><strong>Paisa Integer Rounding:</strong> JavaScript floating point issues (e.g. <code>0.1 + 0.2 !== 0.3</code>) are eliminated by storing all monetary amounts as integer paisas (cents). Equal splits calculate <code>Math.floor(total / n)</code> and distribute remainder paisas to the first <code>r</code> members so the sum of individual shares <strong>strictly equals</strong> the total bill.</p>
+        <p><strong>Greedy Min-Cash-Flow Simplification:</strong> Reduces pairwise debts from \(O(N^2)\) to at most \(N - 1\) transfers by iteratively matching the member who owes the most (maximal debtor) with the member who is owed the most (maximal creditor).</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="page-footer" role="contentinfo">
+  <div class="footer-content">
+    <p><strong>HisaabKitab (TripTab 2.0)</strong> · CS-344 Web Engineering Assignment 1 · Topic #38</p>
+    <p>Created by <strong>Muhammad Zun U Rain Tahir</strong> · CMS: <strong>527352</strong> · BESE 15 B</p>
+    <p class="footer-meta">100% Vanilla HTML5, CSS3, and JavaScript. Zero external frameworks. All names, amounts, and transactions are fictional demo records for academic assessment.</p>
+  </div>
+</footer>
+
+<!-- Expense Detail Dialog Modal -->
+<dialog id="detailModal" class="app-dialog" aria-labelledby="detailModalTitle">
+  <div class="dialog-header">
+    <h3 id="detailModalTitle">Expense Breakdown</h3>
+    <button type="button" class="dialog-close-btn" id="detailCloseBtn" aria-label="Close dialog">✕</button>
+  </div>
+  <div id="detailModalBody" class="dialog-body"></div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-secondary" id="detailDoneBtn">Close</button>
+  </div>
+</dialog>
+
+<!-- Algorithm Explanation Dialog Modal -->
+<dialog id="algoModal" class="app-dialog" aria-labelledby="algoModalTitle">
+  <div class="dialog-header">
+    <h3 id="algoModalTitle">⚡ How Debt Simplification Works</h3>
+    <button type="button" class="dialog-close-btn" id="algoCloseBtn" aria-label="Close dialog">✕</button>
+  </div>
+  <div class="dialog-body">
+    <p>When friends travel together, raw pairwise debts can create a tangled web of dozens of small IOUs (e.g., Ali owes Bilal, Bilal owes Alia, Alia owes Ali).</p>
+    <div class="algo-diagram">
+      <div class="diagram-step">
+        <strong>1. Net Balance Calculation:</strong>
+        <p>We sum what each member paid minus what each member consumed to get their net financial position (+Rs for creditors, −Rs for debtors). Net balances always sum to zero.</p>
+      </div>
+      <div class="diagram-step">
+        <strong>2. Greedy Bipartite Matching:</strong>
+        <p>We pair the largest debtor with the largest creditor. The debtor transfers <code>min(|debt|, |credit|)</code> directly to the creditor, resolving or reducing both balances.</p>
+      </div>
+      <div class="diagram-step">
+        <strong>3. Result:</strong>
+        <p>A group of 4 members requires at most <strong>3 direct transactions</strong> instead of 6 complex pairwise debts!</p>
+      </div>
+    </div>
+  </div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-primary" id="algoDoneBtn">Got it!</button>
+  </div>
+</dialog>
+
+<!-- Floating Add Expense Action Button -->
+<a class="fab-btn" href="#add" aria-label="Quick jump to Add Expense Form" title="Add New Expense">＋</a>
+
+<!-- Toast Notification Live Region -->
+<div id="toastNotification" class="toast-banner" role="status" aria-live="polite"></div>
+
+<!-- JavaScript Application Bundle -->
+<script src="js/app.js"></script>
+</body>
+</html>
