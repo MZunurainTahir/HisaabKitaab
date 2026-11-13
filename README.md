@@ -179,25 +179,6 @@ The default dataset simulates a real road trip from Islamabad through the Karako
 
 ---
 
-## 🎓 Viva Voce Preparation Guide (For Muhammad Zun U Rain Tahir)
-
-When your instructor or lab engineer evaluates your project, here are the most likely questions and the exact technical answers:
-
-### Q1: "Show me where the split calculation happens. How do you prevent rounding errors?"
-* **Answer:** Point to `js/app.js` at line 98 (`calculateEqualSplit`). Explain: *"Sir, instead of using standard floating-point rupees, all amounts are multiplied by 100 into integer paisas. We use `Math.floor(total / n)` for the base share, calculate the exact integer remainder with modulo, and distribute 1 paisa to the first few members. This guarantees that the sum of individual shares always matches the total bill with 100% precision."*
-
-### Q2: "What is your debt simplification algorithm, and how does it work?"
-* **Answer:** Point to `js/app.js` at line 185 (`computeSimplifiedDebts`). Explain: *"We use a Greedy Min-Cash-Flow bipartite matching algorithm. First, we compute each person's net balance (Paid minus Consumed). We separate debtors from creditors and sort them in descending order. Then we repeatedly pair the largest debtor with the largest creditor and transfer the minimum of the two amounts. This reduces the number of payments from $O(N^2)$ to at most $N-1$ transactions."*
-
-### Q3: "Can you make a small live change right now?" (Common Viva Test)
-* **Example Task A (Add a 5% service charge to expenses):** In `js/app.js`, inside the form submission listener, simply add: `totalPaisa = Math.round(totalPaisa * 1.05);`.
-* **Example Task B (Add a new preset button):** In `js/app.js`, append a new entry to the `PRESETS` array: `{ label: '☕ Green Tea', desc: 'Kahwa & dry fruits', amount: 450, cat: 'Food' }`.
-* **Example Task C (Change primary theme color):** In `css/styles.css`, update `--brand-primary: #0a5c36;` to any desired hex code.
-
-### Q4: "Where are the media queries for responsive design?"
-* **Answer:** Point to `css/styles.css` at line 515. Explain: *"We implemented three responsive breakpoints: Desktop (>1024px) with a 2-column layout, Tablet (768px–1024px) with stacked balance columns, and Mobile (≤768px and ≤480px) with single-column forms, horizontal scrolling navigation, and adjusted typography."*
-
----
 
 ---
 
